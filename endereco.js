@@ -112,7 +112,7 @@ EnderecoIntegrator.resolvers.subdivisionCodeRead = function (value, subscriber) 
 EnderecoIntegrator.resolvers.subdivisionCodeGetValue = function(subscriber) {
     let value;
     if (subscriber?.object?.type === 'select-one' && subscriber?.object?.options?.length === 1) {
-        value = subscriber.object.dataset?.initialCountryStateId;
+        value = subscriber.object.dataset?.initialCountryStateId ?? '';
         return value
     }
     value = subscriber.getValue();
