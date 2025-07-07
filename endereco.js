@@ -310,6 +310,27 @@ if (window.EnderecoIntegrator) {
     window.EnderecoIntegrator = EnderecoIntegrator;
 }
 
+window.EnderecoIntegrator.prepareDOMElement = (DOMElement) => {
+    // Check if the element has already been prepared
+    if (DOMElement._enderecoBlurListenerAttached) {
+        return; // Skip if already prepared
+    }
+
+    const enderecoBlurListener = (e) => {
+        // Dispatch 'focus', 'change' and 'blur' events on the target element
+        let prevActiveElement = document.activeElement;
+        e.target.dispatchEvent(new CustomEvent('focus', { bubbles: true, cancelable: true }));
+        e.target.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
+        e.target.dispatchEvent(new CustomEvent('blur', { bubbles: true, cancelable: true }));
+        prevActiveElement.dispatchEvent(new CustomEvent('focus', { bubbles: true, cancelable: true }));
+    }
+
+    DOMElement.addEventListener('endereco-blur', enderecoBlurListener);
+
+    // Mark the element as prepared
+    DOMElement._enderecoBlurListenerAttached = true;
+}
+
 window.EnderecoIntegrator.asyncCallbacks.forEach(function (cb) {
     cb();
 });
