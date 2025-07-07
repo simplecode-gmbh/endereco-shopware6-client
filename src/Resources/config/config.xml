@@ -382,15 +382,14 @@
 
         <input-field type="bool">
             <name>enderecoAMSActive</name>
-            <label>AddressCheck is active</label>
-            <label lang="de-DE">Adressprüfung aktivieren</label>
+            <label>Enable AMS (Address Check and Input Assistant)</label>
+            <label lang="de-DE">AMS aktivieren (Adressprüfung und Eingabe-Assistent)</label>
             <defaultValue>true</defaultValue>
             <helpText>
-                If this feature is activated, endereco will integrate itself in address formulars and validated entered addresses before submit. In case the address has issues, the user will be prompted to correct the address, which will ensure, that the address is manually reviewed and confirmed by user. In case the address is good or has minor issues, that can be corrected automatically, endereco Plugin will do it for the user and confirm the address automatically.
+                This is the master switch for endereco's Address Management System (AMS). When enabled, it activates both address validation and the input assistant features. Address validation checks entered addresses before form submission and prompts users to correct issues when found. The input assistant provides autocomplete functionality and optimizes field ordering for better user experience. Note: The Input Assistant setting below requires this to be enabled to function.
             </helpText>
             <helpText lang="de-DE">
-                Wenn diese Funktion aktiviert ist, wird endereco in Adressformulare integriert und prüft eingegebene Adressen vor dem Absenden. Falls die Adresse Probleme aufweist, wird der Nutzer aufgefordert, die Adresse zu korrigieren, wodurch sichergestellt wird, dass die Adresse manuell überprüft und vom Nutzer bestätigt wird. Falls die Adresse korrekt ist oder nur geringfügige Probleme hat, die automatisch behoben werden können, erledigt endereco Plugin dies für den Nutzer und bestätigt die Adresse automatisch.
-            </helpText>
+                Dies ist der Hauptschalter für endereco's Address Management System (AMS). Wenn aktiviert, werden sowohl die Adressvalidierung als auch die Eingabe-Assistent-Funktionen aktiviert. Die Adressvalidierung prüft eingegebene Adressen vor dem Absenden des Formulars und fordert Nutzer auf, Probleme zu korrigieren. Der Eingabe-Assistent bietet Autocomplete-Funktionen und optimiert die Feldreihenfolge für eine bessere Benutzererfahrung. Hinweis: Die Eingabe-Assistent-Einstellung unten benötigt diese Aktivierung, um zu funktionieren.</helpText>
         </input-field>
 
         <input-field type="bool">
@@ -399,10 +398,10 @@
             <label lang="de-DE">Eingabe-Assistent (Autocomplete) aktivieren</label>
             <defaultValue>true</defaultValue>
             <helpText>
-                If input-assistant is activated, then endereco will disable default browser autocomplete for the relevant fields, optimize (change) the field order for top-to-bottom address entry and display autocomplete dropdowns for address fields that can be autocompleted (zip code, locality, street at the moment)
+                If input-assistant is activated, then endereco will disable default browser autocomplete for the relevant fields, optimize (change) the field order for top-to-bottom address entry and display autocomplete dropdowns for address fields that can be autocompleted (zip code, locality, street at the moment). Note: Requires "Enable AMS" setting above to be activated.
             </helpText>
             <helpText lang="de-DE">
-                Wenn der Eingabe-Assistent aktiviert ist, deaktiviert endereco die Standard-Browser-Autovervollständigung für die relevanten Felder, optimiert (ändert) die Feldreihenfolge für die Adresseingabe und zeigt Autocomplete-Dropdowns für Adressfelder an, die automatisch vervollständigt werden können (derzeit Postleitzahl, Ort, Straße)
+                Wenn der Eingabe-Assistent aktiviert ist, deaktiviert endereco die Standard-Browser-Autovervollständigung für die relevanten Felder, optimiert (ändert) die Feldreihenfolge für die Adresseingabe und zeigt Autocomplete-Dropdowns für Adressfelder an, die automatisch vervollständigt werden können (derzeit Postleitzahl, Ort, Straße). Hinweis: Benötigt die Aktivierung der "AMS aktivieren" Einstellung oben.
             </helpText>
         </input-field>
 
