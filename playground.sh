@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of supported Shopware versions
-declare -a versions=("6.6.0.0" "6.6.1.2" "6.6.2.0" "6.6.3.1" "6.6.4.1" "6.6.5.1" "6.6.6.1" "6.6.7.1" "6.6.8.2" "6.6.9.0" "6.6.10.4")
+declare -a versions=("6.7.0.1")
 
 # Function to check if an element is in the array
 containsElement () {
@@ -54,9 +54,9 @@ if containsElement "$version" "${versions[@]}"; then
     fi
 
     # Activate the plugin
-    docker exec shopware-$version bash -c "cd /var/www/html && ./bin/console plugin:refresh && ./bin/console plugin:install --activate EnderecoShopware6Client"
+    docker exec shopware-$version bash -c "cd /var/www/html && ./bin/console plugin:refresh && ./bin/console plugin:install --activate EnderecoShopware6Client && ./bin/console cache:clear"
 
-    echo "Plugin is activated."
+    echo "Plugin is activated and cache cleared."
 else
     echo "Invalid version. Please enter a valid version from the list."
 fi

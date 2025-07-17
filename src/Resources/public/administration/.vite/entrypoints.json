@@ -1,0 +1,23 @@
+{
+  "base": "/bundles/enderecoshopware6client/administration/",
+  "entryPoints": {
+    "endereco-shopware6-client": {
+      "css": [],
+      "dynamic": [],
+      "js": [
+        "/bundles/enderecoshopware6client/administration/assets/endereco-shopware6-client-SfqM2l1l.js"
+      ],
+      "legacy": false,
+      "preload": []
+    }
+  },
+  "legacy": false,
+  "metadatas": {},
+  "version": [
+    "7.1.0",
+    7,
+    1,
+    0
+  ],
+  "viteServer": null
+}

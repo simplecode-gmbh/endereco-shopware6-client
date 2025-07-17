@@ -31,7 +31,11 @@ find ./EnderecoShopware6ClientStore -type f ! -name '*.bak' -exec sed -i.bak -e 
 find ./EnderecoShopware6ClientStore -type f ! -name '*.bak' -exec sed -i.bak -e 's/_gh/_sw/g' {} \;
 
 mv ./EnderecoShopware6ClientStore/src/EnderecoShopware6Client.php ./EnderecoShopware6ClientStore/src/EnderecoShopware6ClientStore.php
-mv ./EnderecoShopware6ClientStore/src/Resources/public/administration/js/endereco-shopware6-client.js ./EnderecoShopware6ClientStore/src/Resources/public/administration/js/endereco-shopware6-client-store.js
+# Rename all build artifacts in administration folder from endereco-shopware6-client to endereco-shopware6-client-store
+find ./EnderecoShopware6ClientStore/src/Resources/public/administration -type f -name "*endereco-shopware6-client*" | while read -r file; do
+    new_name=$(echo "$file" | sed 's/endereco-shopware6-client/endereco-shopware6-client-store/g')
+    mv "$file" "$new_name"
+done
 
 
 # Find all Twig files and process them

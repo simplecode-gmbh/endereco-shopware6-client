@@ -3,7 +3,8 @@
 ## General Requirements
 
 - **Repository Structure**: This project maintains separate main branches for different Shopware 6 versions:
-    - `main-6.6` - Latest Shopware 6.6.x
+    - `main-6.7` - Latest Shopware 6.7.x
+    - `main-6.6` - Shopware 6.6.x
     - `main-6.5` - Shopware 6.5.x
     - `main-6.4` - Shopware 6.4.x (PHP 7 compatible)
 
