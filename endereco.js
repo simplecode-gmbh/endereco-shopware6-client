@@ -304,6 +304,14 @@ EnderecoIntegrator.isPopupAreaFree = (EAO) => {
     return shopwareModal.contains(form);
 }
 
+/**
+ * Increases the process level if the shopware address modal is open.
+ * @returns {number}
+ */
+EnderecoIntegrator.getProcessLevel = () => {
+    return (document.querySelector('.address-manager-modal')) ? 1 : 0;
+}
+
 if (window.EnderecoIntegrator) {
     window.EnderecoIntegrator = merge(window.EnderecoIntegrator, EnderecoIntegrator);
 } else {
