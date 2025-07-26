@@ -7,6 +7,9 @@ use Endereco\Shopware6Client\Entity\OrderAddress\OrderAddressExtension;
 use Shopware\Core\Checkout\Order\Aggregate\OrderAddress\OrderAddressEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\Uuid\Uuid;
 
 final class AddressExtensionExistsInsurance implements IntegrityInsurance
 {
@@ -32,8 +35,17 @@ final class AddressExtensionExistsInsurance implements IntegrityInsurance
     public function ensure(OrderAddressEntity $addressEntity, Context $context): void
     {
         $addressExtension = $addressEntity->getExtension(OrderAddressExtension::ENDERECO_EXTENSION);
-
         if ($addressExtension instanceof EnderecoOrderAddressExtensionEntity) {
+            return;
+        }
+
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('addressId', $addressEntity->getId()));
+        $criteria->addFilter(new EqualsFilter('addressVersionId', $addressEntity->getVersionId()));
+        $persistedAddressExtension = $this->addressExtensionRepository->search($criteria, $context)->first();
+        if ($persistedAddressExtension instanceof EnderecoOrderAddressExtensionEntity) {
+            $addressEntity->addExtension(OrderAddressExtension::ENDERECO_EXTENSION, $persistedAddressExtension);
+
             return;
         }
 
@@ -50,12 +62,14 @@ final class AddressExtensionExistsInsurance implements IntegrityInsurance
         OrderAddressEntity $addressEntity,
         Context $context
     ): void {
-        /** @var EnderecoOrderAddressExtensionEntity $addressExtension */
-        $addressExtension = $this->createAddressExtensionWithDefaultValues($addressEntity);
+        $addressExtension = EnderecoOrderAddressExtensionEntity::createWithDefaultValues($addressEntity->getId(), $addressEntity->getVersionId());
 
         $this->addressExtensionRepository->upsert(
             [[
+                'id' => $addressExtension->getId(),
+                'versionId' => $addressEntity->getVersionId(),
                 'addressId' => $addressExtension->getAddressId(),
+                'addressVersionId' => $addressExtension->getAddressVersionId(),
                 'amsRequestPayload' => $addressExtension->getAmsRequestPayload(),
                 'amsStatus' => $addressExtension->getAmsStatus(),
                 'amsPredictions' => $addressExtension->getAmsPredictions(),
@@ -65,18 +79,6 @@ final class AddressExtensionExistsInsurance implements IntegrityInsurance
         );
 
         $this->addExtensionToAddressEntity($addressEntity, $addressExtension);
-    }
-
-    /**
-     * Creates new address extension with default values
-     */
-    protected function createAddressExtensionWithDefaultValues(
-        OrderAddressEntity $addressEntity
-    ): EnderecoOrderAddressExtensionEntity {
-        $addressExtension = new EnderecoOrderAddressExtensionEntity();
-        $addressExtension->setAddressId($addressEntity->getId());
-        $addressExtension->setAddress($addressEntity);
-        return $addressExtension;
     }
 
     /**

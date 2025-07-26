@@ -56,8 +56,12 @@ class OrderSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // The primary key aka ID of the `EnderecoOrderAddressExtension` is the ID of the `OrderAddress`.
-        $orderAddressIds = $event->getIds();
+        // Extract address IDs from the written extension entities
+        $orderAddressIds = $this->extractAddressIdsFromWrittenExtensions($event);
+
+        if (empty($orderAddressIds)) {
+            return;
+        }
 
         $orderAddressIds = $this->bySystemConfigFilter->filterEntityIdsBySystemConfig(
             $this->orderAddressRepository,
@@ -77,5 +81,27 @@ class OrderSubscriber implements EventSubscriberInterface
         $orderAddresses = $this->orderAddressRepository->search($criteria, $event->getContext())->getEntities();
 
         $this->ordersCustomFieldsUpdater->updateOrdersCustomFields($orderAddresses, $event->getContext());
+    }
+
+    /**
+     * Extracts order address IDs from the written extension entities.
+     *
+     * Since the extension entity now has its own ID as primary key, we need to extract
+     * the actual address IDs from the written payloads to identify which order addresses
+     * need their custom fields updated.
+     *
+     * @param EntityWrittenEvent $event
+     * @return string[] Array of order address IDs
+     */
+    private function extractAddressIdsFromWrittenExtensions(EntityWrittenEvent $event): array
+    {
+        $addressIds = [];
+        foreach ($event->getPayloads() as $payload) {
+            if (isset($payload['addressId'])) {
+                $addressIds[] = $payload['addressId'];
+            }
+        }
+
+        return array_unique($addressIds);
     }
 }
