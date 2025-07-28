@@ -2,6 +2,7 @@
 
 namespace Endereco\Shopware6Client\Service\AddressIntegrity\OrderAddress;
 
+use Endereco\Shopware6Client\Entity\EnderecoAddressExtension\OrderAddress\EnderecoOrderAddressExtensionCollection;
 use Endereco\Shopware6Client\Entity\EnderecoAddressExtension\OrderAddress\EnderecoOrderAddressExtensionEntity;
 use Endereco\Shopware6Client\Entity\OrderAddress\OrderAddressExtension;
 use Shopware\Core\Checkout\Order\Aggregate\OrderAddress\OrderAddressEntity;
@@ -13,8 +14,12 @@ use Shopware\Core\Framework\Uuid\Uuid;
 
 final class AddressExtensionExistsInsurance implements IntegrityInsurance
 {
+    /** @var EntityRepository<EnderecoOrderAddressExtensionCollection>  */
     private EntityRepository $addressExtensionRepository;
 
+    /**
+     * @param EntityRepository<EnderecoOrderAddressExtensionCollection> $addressExtensionRepository
+     */
     public function __construct(
         EntityRepository $addressExtensionRepository
     ) {

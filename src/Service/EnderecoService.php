@@ -36,10 +36,13 @@ class EnderecoService
 {
     private Client $httpClient;
 
+    /** @var EntityRepository<CountryStateCollection>  */
     private EntityRepository $countryStateRepository;
 
+    /** @var EntityRepository<CustomerAddressCollection>  */
     private EntityRepository $customerAddressRepository;
 
+    /** @var EntityRepository<OrderAddressCollection>  */
     private EntityRepository $orderAddressRepository;
 
     private LoggerInterface $logger;
