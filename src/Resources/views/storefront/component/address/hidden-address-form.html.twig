@@ -9,6 +9,12 @@
 {% endblock %}
 
 {% block component_address_form_address_fields %}
+    {# Compatibility with Shopware 6.7.1.0+ isOldArrangement variable #}
+    {% if isOldArrangement is not defined %}
+        {% set arrangement = config('core.loginRegistration.addressInputFieldArrangement') %}
+        {% set isOldArrangement = arrangement === 'city-zip-state' or arrangement === 'zip-city-state' %}
+    {% endif %}
+
     {{ block('component_address_form_street') }}
 
     {{ block('component_address_form_additional_field1') }}
