@@ -39,7 +39,8 @@
         "phpunit/phpunit": "12.3.*",
         "phpstan/phpstan": "^2.1",
         "phpmd/phpmd": "^2.15",
-        "shopwarelabs/phpstan-shopware": "^0.1"
+        "shopwarelabs/phpstan-shopware": "^0.1",
+        "spaze/phpstan-disallowed-calls": "^4.6"
     },
     "scripts": {
         "qa": [

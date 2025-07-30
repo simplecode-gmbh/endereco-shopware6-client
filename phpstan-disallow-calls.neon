@@ -1,0 +1,13 @@
+parameters:
+    disallowedMethodCalls:
+        -
+            method: 'Endereco\Shopware6Client\Entity\EnderecoAddressExtension\OrderAddress\EnderecoOrderAddressExtensionEntity::__construct'
+            message: 'use ::createWithDefaultValues or ::createWithDefaultValuesFromAddress instead'
+            allowIn:
+                - 'src/Entity/EnderecoAddressExtension/OrderAddress/EnderecoOrderAddressExtensionEntity.php'
+                - 'src/Entity/EnderecoAddressExtension/CustomerAddress/EnderecoCustomerAddressExtensionEntity.php'
+        -
+            method: 'Endereco\Shopware6Client\Entity\EnderecoAddressExtension\CustomerAddress\EnderecoCustomerAddressExtensionEntity::__construct'
+            message: 'use ::createWithDefaultValues or ::createWithDefaultValuesFromAddress instead'
+            allowIn:
+                - 'src/Entity/EnderecoAddressExtension/CustomerAddress/EnderecoCustomerAddressExtensionEntity.php'

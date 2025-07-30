@@ -35,6 +35,22 @@ class EnderecoCustomerAddressExtensionEntity extends EnderecoBaseAddressExtensio
     protected ?CustomerAddressEntity $address = null;
 
     /**
+     * Creates a customer address extension instance with default values and proper unique identifier.
+     * 
+     * @param CustomerAddressEntity $addressEntity The customer address entity to associate with
+     * @return EnderecoCustomerAddressExtensionEntity
+     */
+    public static function createWithDefaultValues(CustomerAddressEntity $addressEntity): EnderecoCustomerAddressExtensionEntity
+    {
+        $addressExtension = new EnderecoCustomerAddressExtensionEntity();
+        $addressExtension->setAddressId($addressEntity->getId());
+        $addressExtension->setUniqueIdentifier($addressEntity->getId());
+        $addressExtension->setAddress($addressEntity);
+
+        return $addressExtension;
+    }
+
+    /**
      * Gets the associated customer address entity.
      *
      * @return CustomerAddressEntity|null The associated customer address entity or null if not set
@@ -51,12 +67,28 @@ class EnderecoCustomerAddressExtensionEntity extends EnderecoBaseAddressExtensio
      */
     public function setAddress(?Entity $address): void
     {
-        if (!$address instanceof CustomerAddressEntity) {
+        if ($address !== null && !$address instanceof CustomerAddressEntity) {
             throw new \InvalidArgumentException('The address must be an instance of CustomerAddressEntity.');
         }
 
         $this->address = $address;
     }
+
+    /**
+     * Override getUniqueIdentifier to ensure consistent behavior with Shopware's collection system.
+     * Uses addressId as a fallback if the the unique identifier wasn't explicitly set.
+     * This prevents TypeError when the entity is processed through collections before database hydration,
+     * while preserving keys that are set by Shopware explicitly and might differ from the default.
+     */
+    public function getUniqueIdentifier(): string
+    {
+        if (isset($this->_uniqueIdentifier)) {
+            return $this->_uniqueIdentifier;
+        }
+
+        return $this->addressId;
+    }
+
 
     /**
      * Creates a new order address extension entity based on this customer address extension.
@@ -99,4 +131,5 @@ class EnderecoCustomerAddressExtensionEntity extends EnderecoBaseAddressExtensio
         $this->setAmsPredictions($addressExtensionToSyncFrom->getAmsPredictions());
         $this->setAmsTimestamp($addressExtensionToSyncFrom->getAmsTimestamp());
     }
+
 }
