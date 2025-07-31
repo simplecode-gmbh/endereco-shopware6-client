@@ -39,6 +39,11 @@ class AddressCheckResult
     protected $addressSignature = '';
 
     /**
+     * @var string The format type used when this result was generated (FORMAT_COMBINED or FORMAT_SPLIT)
+     */
+    protected $formatType = AddressCheckPayloadInterface::FORMAT_COMBINED;
+
+    /**
      * Checks if automatic correction has been applied.
      *
      * @return bool Always returns false. This method is meant to be overridden by subclasses
@@ -84,6 +89,22 @@ class AddressCheckResult
     public function setAddressSignature(string $addressSignature): void
     {
         $this->addressSignature = $addressSignature;
+    }
+
+    /**
+     * @return string The format type used when this result was generated
+     */
+    public function getFormatType(): string
+    {
+        return $this->formatType;
+    }
+
+    /**
+     * @param string $formatType The format type (FORMAT_COMBINED or FORMAT_SPLIT)
+     */
+    public function setFormatType(string $formatType): void
+    {
+        $this->formatType = $formatType;
     }
 
     /**
