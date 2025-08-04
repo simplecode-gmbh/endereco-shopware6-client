@@ -676,6 +676,13 @@ class EnderecoService
      */
     public function isImportExportCheckFeatureEnabled(string $salesChannelId): bool
     {
+        // TODO: Temporarily disabled due to non-working import address check functionality
+        // Always return false to disable the import/export check feature
+        // Suppress unused parameter warning as we're temporarily disabling this feature
+        unset($salesChannelId);
+        return false;
+
+        /* Original implementation - commented out
         // Check if the Endereco plugin is active and ready to use for the given sales channel.
         $pluginIsReadyToUse = $this->isEnderecoPluginActive($salesChannelId);
 
@@ -687,6 +694,7 @@ class EnderecoService
         $featureIsActive = $pluginIsReadyToUse && $featureIsActiveInSettings;
 
         return $featureIsActive;
+        */
     }
 
     /**

@@ -224,6 +224,8 @@
         </input-field>
         -->
 
+        <!-- TODO: Temporarily hidden due to non-working import address check functionality -->
+        <!--
         <input-field type="bool">
             <name>enderecoImportExportCheck</name>
             <label>Enable address checks during customer import</label>
@@ -238,6 +240,7 @@
                 Dies kann die Datenqualität verbessern, könnte aber den Importvorgang verlangsamen.
             </helpText>
         </input-field>
+        -->
     </card>
 
     <card>
