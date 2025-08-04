@@ -13,7 +13,7 @@ parameters:
         - ./vendor
         - ./node_modules
     bootstrapFiles:
-        - shops/6.7.1.0/vendor/autoload.php
+        - shops/6.7.1.2/vendor/autoload.php
     treatPhpDocTypesAsCertain: false
     ignoreErrors:
         -
