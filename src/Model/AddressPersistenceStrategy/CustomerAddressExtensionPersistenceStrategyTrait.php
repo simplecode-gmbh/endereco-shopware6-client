@@ -4,6 +4,8 @@ namespace Endereco\Shopware6Client\Model\AddressPersistenceStrategy;
 
 use Endereco\Shopware6Client\Entity\EnderecoAddressExtension\CustomerAddress\EnderecoCustomerAddressExtensionCollection;
 use Endereco\Shopware6Client\Entity\EnderecoAddressExtension\CustomerAddress\EnderecoCustomerAddressExtensionEntity;
+use Endereco\Shopware6Client\Model\EnderecoExtensionData;
+use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 
 /**
@@ -105,8 +107,12 @@ trait CustomerAddressExtensionPersistenceStrategyTrait
             return;
         }
 
-        $update = $this->buildAddressExtensionUpsertPayload($addressExtension->getAddressId(), $streetName, $buildingNumber);
-        $this->extensionRepository->update([$update], $this->context);
+        $extensionData = (new EnderecoExtensionData())
+            ->setAddressId($addressExtension->getAddressId())
+            ->setStreet($streetName)
+            ->setHouseNumber($buildingNumber);
+        
+        $this->extensionRepository->update([$extensionData->toArray()], $this->context);
 
         $this->updateExtensionEntityFields($streetName, $buildingNumber, $addressExtension);
     }

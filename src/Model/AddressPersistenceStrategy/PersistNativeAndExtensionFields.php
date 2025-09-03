@@ -8,6 +8,8 @@ use Endereco\Shopware6Client\DTO\CustomerAddressDTO;
 use Endereco\Shopware6Client\Entity\EnderecoAddressExtension\CustomerAddress\EnderecoCustomerAddressExtensionCollection;
 use Endereco\Shopware6Client\Entity\EnderecoAddressExtension\CustomerAddress\EnderecoCustomerAddressExtensionEntity;
 use Endereco\Shopware6Client\Model\CustomerAddressPersistenceStrategy;
+use Endereco\Shopware6Client\Model\CustomerAddressUpdatePayload;
+use Endereco\Shopware6Client\Model\CustomerAddressField;
 use Endereco\Shopware6Client\Service\AddressCheck\AdditionalAddressFieldCheckerInterface;
 use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressCollection;
 use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressEntity;
@@ -92,8 +94,8 @@ final class PersistNativeAndExtensionFields implements CustomerAddressPersistenc
         }
 
         // Update in DB
-        $updatePayload = $this->buildNativeUpdatePayload($streetFull, $additionalInfo, $addressEntity);
-        $this->addressRepository->update([$updatePayload], $this->context);
+        $payload = $this->buildNativeUpdatePayload($streetFull, $additionalInfo, $addressEntity);
+        $this->addressRepository->update([$payload->toArray()], $this->context);
 
         // Update in memory
         $this->updateAddressEntityFields($streetFull, $additionalInfo, $addressEntity);
@@ -130,24 +132,26 @@ final class PersistNativeAndExtensionFields implements CustomerAddressPersistenc
      * @param string|null $additionalInfo Additional address information
      * @param CustomerAddressEntity $addressEntity Address entity being updated
      *
-     * @return array<string, string|null> Update payload for the address repository
+     * @return CustomerAddressUpdatePayload Update payload for the address repository
      */
     private function buildNativeUpdatePayload(
         string $streetFull,
         ?string $additionalInfo,
         CustomerAddressEntity $addressEntity
-    ): array {
-        $updateData = [
-            'id' => $addressEntity->getId(),
-            'street' => $streetFull,
-        ];
+    ): CustomerAddressUpdatePayload {
+        $payload = new CustomerAddressUpdatePayload($addressEntity->getId());
+        $payload->setStreet($streetFull);
 
         if ($this->additionalAddressFieldChecker->hasAdditionalAddressField($this->context)) {
             $fieldName = $this->additionalAddressFieldChecker->getAvailableAdditionalAddressFieldName($this->context);
-            $updateData[$fieldName] = $additionalInfo;
+            if ($fieldName === CustomerAddressField::ADDITIONAL_ADDRESS_LINE_1) {
+                $payload->setAdditionalAddressLine1($additionalInfo);
+            } elseif ($fieldName === CustomerAddressField::ADDITIONAL_ADDRESS_LINE_2) {
+                $payload->setAdditionalAddressLine2($additionalInfo);
+            }
         }
 
-        return $updateData;
+        return $payload;
     }
 
     /**
