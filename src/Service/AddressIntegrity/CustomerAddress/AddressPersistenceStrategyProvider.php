@@ -14,6 +14,8 @@ use Endereco\Shopware6Client\Model\CustomerAddressPersistenceStrategy;
 use Endereco\Shopware6Client\Service\AddressCheck\AdditionalAddressFieldCheckerInterface;
 use Endereco\Shopware6Client\Service\AddressCorrection\AddressCorrectionScopeBuilderInterface;
 use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressCollection;
+use Endereco\Shopware6Client\Service\CustomerAddressEntityUpdater;
+use Endereco\Shopware6Client\Service\EnderecoExtensionEntityUpdater;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 
@@ -28,6 +30,8 @@ final class AddressPersistenceStrategyProvider implements AddressPersistenceStra
 
     /** @var EntityRepository<CustomerAddressCollection>  */
     private EntityRepository $customerAddressRepository;
+    private CustomerAddressEntityUpdater $entityUpdater;
+    private EnderecoExtensionEntityUpdater $extensionEntityUpdater;
 
     /**
      * @param EntityRepository<CustomerAddressCollection> $customerAddressRepository
@@ -37,12 +41,16 @@ final class AddressPersistenceStrategyProvider implements AddressPersistenceStra
         AddressCorrectionScopeBuilderInterface $addressCorrectionScopeBuilder,
         AdditionalAddressFieldCheckerInterface $additionalAddressFieldChecker,
         EntityRepository $customerAddressRepository,
-        EntityRepository $customerAddressExtensionRepository
+        EntityRepository $customerAddressExtensionRepository,
+        CustomerAddressEntityUpdater $entityUpdater,
+        EnderecoExtensionEntityUpdater $extensionEntityUpdater
     ) {
         $this->additionalAddressFieldChecker = $additionalAddressFieldChecker;
         $this->addressCorrectionScopeBuilder = $addressCorrectionScopeBuilder;
         $this->customerAddressRepository = $customerAddressRepository;
         $this->customerAddressExtensionRepository = $customerAddressExtensionRepository;
+        $this->entityUpdater = $entityUpdater;
+        $this->extensionEntityUpdater = $extensionEntityUpdater;
     }
 
     /**
@@ -73,14 +81,17 @@ final class AddressPersistenceStrategyProvider implements AddressPersistenceStra
                     $this->additionalAddressFieldChecker,
                     $this->customerAddressRepository,
                     $this->customerAddressExtensionRepository,
-                    $context
+                    $context,
+                    $this->entityUpdater,
+                    $this->extensionEntityUpdater
                 );
             }
 
             if ($addressCorrectionScope->canWriteExtensionFields()) {
                 return new PersistOnlyExtensionFields(
                     $this->customerAddressExtensionRepository,
-                    $context
+                    $context,
+                    $this->extensionEntityUpdater
                 );
             }
         }
