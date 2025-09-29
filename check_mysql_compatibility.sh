@@ -37,17 +37,25 @@ setup() {
   # Create network for communication between dockware and mysql container, no port mappings required
     docker network create $network_name
 
-    # Create mysql container
+    # Create mysql container with tmpfs and performance tuning
     docker run \
         -d \
         $mysql_environment_variables \
         --name $mysql_container_name \
         --network=$network_name \
+        --tmpfs /var/lib/mysql:rw,size=2g \
+        --tmpfs /tmp:rw,size=512m \
         --health-cmd="mysql -u $mysql_user -p$mysql_password -e 'SHOW TABLES;' $mysql_database > /dev/null || exit 1" \
         --health-interval=5s \
         --health-timeout=2s \
         --health-retries=10 \
-        "mysql:$1"
+        "mysql:$1" \
+        --innodb-flush-log-at-trx-commit=0 \
+        --innodb-buffer-pool-size=512M \
+        --innodb-log-file-size=256M \
+        --innodb-doublewrite=0 \
+        --sync-binlog=0 \
+        --skip-log-bin
 
     # Wait until mysql container is healthy, fail when mysql container becomes unhealthy
     until [ "$(docker inspect --format='{{json .State.Health.Status}}' "$mysql_container_name")" = "\"healthy\"" ]; do
@@ -62,22 +70,20 @@ setup() {
       sleep 5
     done
 
-    # Create dockware container
+    # Create dockware container with bind mounts for essential plugin files only
     # Waiting for healthy not necessary, console is available right away
     docker run \
       -d \
       $dockware_environment_variables \
       --name $dockware_container_name \
       --network=$network_name \
+      -v "$(pwd)/src:$plugin_container_dir/src" \
+      -v "$(pwd)/composer.json:$plugin_container_dir/composer.json" \
       $dockware_image
 
     # Install shopware in dockware container to run migrations in mysql container
     # Needs --force to ignore the install.lock file
     docker exec $dockware_container_name php bin/console system:install --force
-
-    # Copy plugin files to container and set permissions
-    docker cp $plugin_host_dir $dockware_container_name:$plugin_container_dir
-    docker exec -u root $dockware_container_name chown -R www-data:www-data $plugin_container_dir
 }
 
 # Checks mysql compatibility by installing the plugin
