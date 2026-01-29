@@ -218,18 +218,6 @@
                                                 selectorsCollection.additionalInfo = `[data-endereco-${markerValue}-form-id="${formId}"] ${additionalInfoSelector}`;
                                             }
 
-                                            // todo: alte Version!
-                                            /*var EAO = window.EnderecoIntegrator.initAMS(
-                                                selectorsCollection,
-                                                {
-                                                    name: objectName,
-                                                    addressType: addressType,
-                                                    ajaxForm: isAjax,
-                                                    intent: intent
-                                                }
-                                            );*/
-
-                                            // needed to set an afterCreateHandler
                                             enderecoInitAMS(
                                                 selectorsCollection,
                                                 {
@@ -312,7 +300,7 @@
                     EAO.then(EAO => {
                         EAO.waitForAllExtension().then(function () {
 
-                            if(EAO.addressType !== 'shipping_address') {
+                            if(EAO.addressType !== 'shipping_address' && EAO.addressType !== 'general_address') {
                                return;
                             }
 
