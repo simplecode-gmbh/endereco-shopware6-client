@@ -312,6 +312,10 @@
                     EAO.then(EAO => {
                         EAO.waitForAllExtension().then(function () {
 
+                            if(EAO.addressType !== 'shipping_address') {
+                               return;
+                            }
+
                             window.EAO = EAO;
 
                             EAO.onAfterAddressPersisted.push((event, result) => {

@@ -108,6 +108,12 @@ export default class TonurPackstationEnderecoPlugin extends PluginBaseClass {
         });
     }
 
+    /**
+     * Update borders of source and destination form groups based on validation status
+     * @param source
+     * @param destination
+     * @private
+     */
     _updateBorders(source, destination) {
         if (!source || !destination) {
             return;
@@ -137,34 +143,33 @@ export default class TonurPackstationEnderecoPlugin extends PluginBaseClass {
      * Should trigger a andereco address check which should show a popup for corrections
      * @private
      */
-    _triggerAddressCheck() {
+    async _triggerAddressCheck() {
         const me = this;
 
-        // only works when inputs are "visible" and not display none
-        if (me.$enderecoHouseNumberInput) {
-            me.$enderecoHouseNumberInput.focus();
+        if (window.EAO && window.EAO.util) {
 
-            // needed because focus blur is too fast otherwise
-            setTimeout(() => {
-                me.$enderecoHouseNumberInput.blur();
-            }, 10);
-        }
+            // we need to wait until all fields have been updated in the background
+            await me._delay(250);
 
-        // only works when inputs are "visible" and not display none
-        if (me.$streetInput) {
-            me.$streetInput.focus();
+            // invalidate all data about the address
+            window.EAO.util.invalidateAddressMeta();
 
-            // needed because focus blur is too fast otherwise
-            setTimeout(() => {
-                me.$streetInput.blur();
-            }, 10);
-        }
+            // wait for invalidation finishes...
+            await me._delay(50);
 
-        // todo: should this work?
-        /*if(window.EAO && window.EAO.util) {
-            console.log('triggering address check');
+            // we need to trigger a address check because we check hidden fields
             window.EAO.util.checkAddress();
-        }*/
+        }
+    }
+
+    /**
+     * Simple delay function to wait for some time
+     * @param ms
+     * @returns {Promise}
+     * @private
+     */
+    _delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     /**
@@ -183,14 +188,8 @@ export default class TonurPackstationEnderecoPlugin extends PluginBaseClass {
             me.$enderecoStreetInput.value = event.detail.streetValue;
         }
 
-        // to make focus() and blur() possible hide the fields without display none
-        // using focus und blur on the shopware or endereco fields triggers a address check
-        if(event.detail.isPackstationOrPostOffice) {
-            if (me.$streetInput) {
-                const $streetFormGroup = me.$streetInput.closest('.form-group');
-                me._hideElement($streetFormGroup);
-            }
-
+        // hide endereco fields for street and housenumber
+        if (event.detail.isPackstationOrPostOffice) {
             if (me.$enderecoStreetInput) {
                 const $enderecoStreetFormGroup = me.$enderecoStreetInput.closest('.form-group');
                 me._hideElement($enderecoStreetFormGroup);
@@ -201,19 +200,10 @@ export default class TonurPackstationEnderecoPlugin extends PluginBaseClass {
                 me._hideElement($enderecoHouseNumberFormGroup);
             }
 
-            if (me.$additionalAddressLine1Input) {
-                const $additionalAddressLine1FormGroup = me.$additionalAddressLine1Input.closest('.form-group');
-                me._hideElement($additionalAddressLine1FormGroup);
-            }
-
             return;
         }
 
-        if (me.$streetInput) {
-            const $streetFormGroup = me.$streetInput.closest('.form-group');
-            me._showElement($streetFormGroup);
-        }
-
+        // show endereco fields for street and housenumber if we have a normal address for shipping
         if (me.$enderecoStreetInput) {
             const $enderecoStreetFormGroup = me.$enderecoStreetInput.closest('.form-group');
             me._showElement($enderecoStreetFormGroup);
@@ -223,21 +213,10 @@ export default class TonurPackstationEnderecoPlugin extends PluginBaseClass {
             const $enderecoHouseNumberFormGroup = me.$enderecoHouseNumberInput.closest('.form-group');
             me._showElement($enderecoHouseNumberFormGroup);
         }
-
-        if (me.$additionalAddressLine1Input) {
-            const $additionalAddressLine1FormGroup = me.$additionalAddressLine1Input.closest('.form-group');
-            me._showElement($additionalAddressLine1FormGroup);
-        }
     }
 
     _hideElement($el) {
-        $el.style.display = 'inline';
-        //$el.style.border = '1px solid blue';
-        $el.style.opacity = '0';
-        $el.style.width = '0';
-        $el.style.height = '0';
-        $el.style.margin = '0';
-        $el.style.padding = '0';
+        $el.style.display = 'none';
     }
 
     _showElement($el) {
